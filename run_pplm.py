@@ -757,15 +757,15 @@ def run_pplm_example(
             add_special_tokens=False
         )
 
-    print("= Prefix of sentence =")
-    print(tokenizer.decode(tokenized_cond_text))
-    print()
+    # print("= Prefix of sentence =")
+    # print(tokenizer.decode(tokenized_cond_text))
+    # print()
 
     # generate unperturbed and perturbed texts
 
     # full_text_generation returns:
     # unpert_gen_tok_text, pert_gen_tok_texts, discrim_losses, losses_in_time
-    unpert_gen_tok_text, pert_gen_tok_texts, _, _ = full_text_generation(
+    unpert_gen_tok_text, pert_gen_tok_texts, _, losses_in_time = full_text_generation(
         model=model,
         tokenizer=tokenizer,
         context=tokenized_cond_text,
@@ -795,9 +795,9 @@ def run_pplm_example(
 
     if verbosity_level >= REGULAR:
         print("=" * 80)
-    print("= Unperturbed generated text =")
-    print(unpert_gen_text)
-    print()
+    # print("= Unperturbed generated text =")
+    # print(unpert_gen_text)
+    # print()
 
     generated_texts = []
 
@@ -831,12 +831,19 @@ def run_pplm_example(
             else:
                 pert_gen_text = tokenizer.decode(pert_gen_tok_text.tolist()[0])
 
-            print("= Perturbed generated text {} =".format(i + 1))
-            print(pert_gen_text)
-            print()
+            # print("= Perturbed generated text {} =".format(i + 1))
+            # print(pert_gen_text)
+            # print()
+            # print("losses in time = ")
+            # print(losses_in_time[0][-1][-1])
+            # print()
         except:
             pass
 
+        modified_unpert = unpert_gen_text.replace('\n', ' ')
+        modified_pert = pert_gen_text.replace('\n', ' ')
+        print("Unperturbed generated text\tPerturbed generated text\tLoss")
+        print(f"{modified_unpert}\t{modified_pert}\t{losses_in_time[0][-1][-1]}")
         # keep the prefix, perturbed seq, original seq for each index
         generated_texts.append(
             (tokenized_cond_text, pert_gen_tok_text, unpert_gen_tok_text)
